@@ -3,7 +3,7 @@ import HomePage from '@/app/components/HomePage'
 
 export default function Home() {
   return (
-    <HomePage date="tomorrow"/>
+    <HomePage/>
 
   )
 }
