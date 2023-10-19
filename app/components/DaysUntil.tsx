@@ -15,15 +15,21 @@ const GET_DATES = gql`
   }
 `;
 
+type FriendsgivingDate = {
+  id: number
+  date: string
+  active: boolean
+}
+
 export default function DaysUntil() {
-  const { loading, error, data } = useQuery(GET_DATES)
+  const { loading, error, data } = useQuery<{friendsgivingDates: Array<FriendsgivingDate>}>(GET_DATES)
 
   if (loading || error !== undefined || data === undefined) {
     return null
   }
 
-  const date = data.friendsgivingDates.find((fDate ) => fDate.active);
-  const actualDate = new Date(date.date)
+  const date = data.friendsgivingDates.find((fDate:FriendsgivingDate) => fDate.active);
+  const actualDate = new Date(date?.date || '')
   const today = new Date();
 
   return (
