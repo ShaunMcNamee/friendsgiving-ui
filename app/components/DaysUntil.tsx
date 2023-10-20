@@ -1,9 +1,9 @@
 'use client'
 
-import { Text } from '@chakra-ui/react'
+import { Text, Heading, Stack } from '@chakra-ui/react'
 import React from 'react'
 import { gql, useQuery } from '@apollo/client';
-import { differenceInDays, format } from 'date-fns'
+import { addHours, differenceInDays, format } from 'date-fns'
 
 const GET_DATES = gql`
   query GetDates {
@@ -29,10 +29,14 @@ export default function DaysUntil() {
   }
 
   const date = data.friendsgivingDates.find((fDate:FriendsgivingDate) => fDate.active);
-  const actualDate = new Date(date?.date || '')
+  // To account for time zone differences
+  const actualDate = addHours(new Date(date?.date || ''), 6)
   const today = new Date();
 
   return (
-    <Text>Friendsgiving is on {format(actualDate, 'MMM dd, yyyy')}, which is {differenceInDays(actualDate, today)} days from now</Text>
+    <Stack spacing={4}>
+      <Heading color="brand.orangeRyb">When is Friendsgiving?</Heading>
+      <Text>Friendsgiving is on {format(actualDate, 'MMM dd, yyyy')}, which is {differenceInDays(actualDate, today)} days from now.</Text>
+    </Stack>
   )
 }

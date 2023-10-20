@@ -1,10 +1,12 @@
 'use client'
 
-import { ChakraProvider, Box, Text } from '@chakra-ui/react'
+import { ChakraProvider, Box, Stack } from '@chakra-ui/react'
 import React from 'react'
 import theme from '../../theme'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import DaysUntil from './DaysUntil'
+import Polling from './Polling'
+import backgroundImage from "../../public/background.jpeg";
 
 const client = new ApolloClient({
   uri: process.env.NEXT_PUBLIC_CMS_URL,
@@ -22,12 +24,15 @@ export default function HomePage() {
           overflow="scroll"
           bg="brand.metallicSeaweed"
           h="100vh"
+          backgroundImage={`url(${backgroundImage.src})`}
+          backgroundSize="cover"
+          backgroundRepeat="no-repeat"
         >
-          <Box m="0 auto" maxW="1200" py="16" px="6">
-            <DaysUntil/>
-            <Text color="brand.orangeRyb">Here is some text in the first color.</Text>
-            <Text color="brand.tennesseeOrange">Does this second color perhaps look better?</Text>
-            <Text color="brand.sinopia">How is the third color?</Text>
+          <Box m="0 auto" maxW="1200" py={{ base: '350px', md: '550px' }} px="6">
+            <Stack spacing="36px">
+              <DaysUntil/>
+              <Polling />
+            </Stack>
           </Box>
         </Box>
       </ApolloProvider>
