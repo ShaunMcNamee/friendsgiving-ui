@@ -32,7 +32,7 @@ export default function Polling() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">Food Time Poll</Heading>
-      <Text>Please choose the time that is best for you to eat, and put in your name. Don't worry if you think you have already voted, we'll make sure you are only counted once.</Text>
+      <Text>Please choose the time that is best for you to eat, and put in your name. Don&apos;t worry if you think you have already voted, we&apos;ll make sure you are only counted once.</Text>
       <Poll/>
     </Stack>
   )
