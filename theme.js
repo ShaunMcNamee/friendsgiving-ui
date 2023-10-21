@@ -1,4 +1,6 @@
 import { extendTheme } from '@chakra-ui/react'
+import { selectTheme } from './select'
+import { inputTheme } from './input'
 
 const theme = extendTheme({
   colors: {
@@ -10,6 +12,7 @@ const theme = extendTheme({
       sinopia: '#D93D04',
     },
   },
+  components: { Select: selectTheme, Input: inputTheme },
 })
 
 export default theme

@@ -6,6 +6,8 @@ import theme from '../../theme'
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import DaysUntil from './DaysUntil'
 import Polling from './Polling'
+import RSVP from './RSVP'
+import Foods from './Foods'
 import backgroundImage from "../../public/background.jpeg";
 
 const client = new ApolloClient({
@@ -32,6 +34,8 @@ export default function HomePage() {
             <Stack spacing="36px">
               <DaysUntil/>
               <Polling />
+              <RSVP />
+              <Foods />
             </Stack>
           </Box>
         </Box>

@@ -30,7 +30,7 @@ export default function DaysUntil() {
 
   const date = data.friendsgivingDates.find((fDate:FriendsgivingDate) => fDate.active);
   // To account for time zone differences
-  const actualDate = addHours(new Date(date?.date || ''), 6)
+  const actualDate = addHours(new Date(date?.date || ''), 19)
   const today = new Date();
 
   return (
