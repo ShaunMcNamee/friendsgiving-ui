@@ -43,7 +43,7 @@ export default function Foods() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">Foods</Heading>
-      <Text>Please add any foods you are going to bring.</Text>
+      <Text fontWeight="bold">Please add any foods you are going to bring.</Text>
       <Form/>
       <TableContainer>
         <Table variant='simple'>

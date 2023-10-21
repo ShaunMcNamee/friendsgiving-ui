@@ -32,7 +32,7 @@ export default function RSVP() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">RSVP</Heading>
-      <Text>Please RSVP for the number of adults and children. Don&apos;t worry if you think you have already RSVP&apos;d, we&apos;ll make sure you are only counted once.</Text>
+      <Text fontWeight="bold">Please RSVP for the number of adults and children. Don&apos;t worry if you think you have already RSVP&apos;d, we&apos;ll make sure you are only counted once.</Text>
       <Form/>
     </Stack>
   )

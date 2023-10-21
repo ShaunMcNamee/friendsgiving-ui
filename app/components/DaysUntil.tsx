@@ -36,7 +36,7 @@ export default function DaysUntil() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">When is Friendsgiving?</Heading>
-      <Text>Friendsgiving is on {format(actualDate, 'MMM dd, yyyy')}, which is {differenceInDays(actualDate, today)} days from now.</Text>
+      <Text fontWeight="bold">Friendsgiving is on {format(actualDate, 'MMM dd, yyyy')}, which is {differenceInDays(actualDate, today)} days from now.</Text>
     </Stack>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Text, Heading, Stack, Select, Input, Button } from '@chakra-ui/react'
+import { Text, Heading, Stack, Checkbox, Input, Button } from '@chakra-ui/react'
 import React, {useState} from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client';
 
@@ -32,7 +32,7 @@ export default function Polling() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">Food Time Poll</Heading>
-      <Text>Please choose the time that is best for you to eat, and put in your name. Don&apos;t worry if you think you have already voted, we&apos;ll make sure you are only counted once.</Text>
+      <Text fontWeight="bold">Please choose the times that are best for you to eat, and put in your name. Don&apos;t worry if you think you have already voted, we&apos;ll make sure you are only counted once.</Text>
       <Poll/>
     </Stack>
   )
@@ -69,7 +69,7 @@ type PollInput = {
 
 function Poll() {
   const { loading, error, data } = useQuery<{pollOptions: Array<PollOption>}>(GET_POLL_OPTIONS)
-  const [optionChosen, setOptionChosen] = useState<string>('')
+  const [optionsChosen, setOptionsChosen] = useState<Array<string>>([])
   const [name, setName] = useState<string>('')
   const [addPollInput, mutationData] = useMutation<PollInput>(ADD_POLL_INPUT);
 
@@ -94,16 +94,22 @@ function Poll() {
   return <form
       onSubmit={async (e) => {
       e.preventDefault();
-      await addPollInput({ variables: { option: optionChosen, name } });
-      setOptionChosen('')
+      await addPollInput({ variables: { option: optionsChosen.join(','), name } });
+      setOptionsChosen([])
       setName('')
     }}>
     <Stack direction={['column', 'row']}>
-      <Select placeholder='Select option' variant="filled" value={optionChosen} onChange={(e) => setOptionChosen(e.target.value)}>
-        {filteredPollOptions.map(option => (
-          <option key={option.option} value={option.option}>{option.option}</option>
-        ))}
-      </Select>
+      {filteredPollOptions.map(option => (
+        <Checkbox key={option.option} variant="filled" onChange={(e) => {
+          if (e.target.checked) {
+            if (!optionsChosen.includes(option.option)) {
+              setOptionsChosen([...optionsChosen, option.option])
+            }
+          } else {
+            setOptionsChosen(optionsChosen.filter(optionChosen => optionChosen !== option.option))
+          }
+        }}>{option.option}</Checkbox>
+      ))}
       <Input placeholder="Name" variant="filled" value={name} onChange={(e) => setName(e.target.value)}/>
       <Button bg="brand.sinopia" _hover={{background: 'brand.orangeRyb'}} px={6} type="submit">Submit</Button>
     </Stack>
