@@ -1,6 +1,20 @@
 'use client'
 
-import { Text, Heading, Stack, Checkbox, Input, Button } from '@chakra-ui/react'
+import {
+  Text,
+  Heading,
+  Stack,
+  Checkbox,
+  Input,
+  Button,
+  TableContainer,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+} from '@chakra-ui/react'
 import React, {useState} from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client';
 
@@ -34,7 +48,44 @@ export default function Polling() {
       <Heading color="brand.orangeRyb">Food Time Poll</Heading>
       <Text fontWeight="bold">Please choose the times that are best for you to eat, and put in your name. Don&apos;t worry if you think you have already voted, we&apos;ll make sure you are only counted once.</Text>
       <Poll/>
+      <PollTable/>
     </Stack>
+  )
+}
+
+const GET_POLL_INPUTS = gql`
+  query GetPollInputs {
+    pollInputs {
+      option
+      name
+    }
+  }
+`;
+
+function PollTable() {
+  const { loading, error, data } = useQuery<{pollInputs: Array<PollInput>}>(GET_POLL_INPUTS)
+
+  if (loading || error !== undefined || data === undefined) {
+    return null
+  }
+
+  return (
+    <TableContainer>
+      <Table variant='simple'>
+        <Thead>
+          <Tr>
+            <Th color="brand.orangeRyb">Time</Th>
+            <Th color="brand.orangeRyb">Name</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data.pollInputs.map((input,index) => <Tr key={index} bgColor="brand.sinopia">
+            <Td>{input.option}</Td>
+            <Td>{input.name}</Td>
+          </Tr>)}
+        </Tbody>
+      </Table>
+    </TableContainer>
   )
 }
 
@@ -71,7 +122,7 @@ function Poll() {
   const { loading, error, data } = useQuery<{pollOptions: Array<PollOption>}>(GET_POLL_OPTIONS)
   const [optionsChosen, setOptionsChosen] = useState<Array<string>>([])
   const [name, setName] = useState<string>('')
-  const [addPollInput, mutationData] = useMutation<PollInput>(ADD_POLL_INPUT);
+  const [addPollInput, mutationData] = useMutation<PollInput>(ADD_POLL_INPUT, { refetchQueries: [GET_POLL_INPUTS] });
 
   if (loading || error !== undefined || data === undefined) {
     return null
@@ -83,10 +134,6 @@ function Poll() {
 
   if (mutationData.error !== undefined) {
     return <Text>There was an error . . . . </Text>
-  }
-
-  if (mutationData.data !== undefined) {
-    return <Text>Thanks for your input!</Text>
   }
 
   const filteredPollOptions = data.pollOptions.filter((option) => option.active)

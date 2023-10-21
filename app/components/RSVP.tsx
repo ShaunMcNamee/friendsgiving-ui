@@ -1,6 +1,6 @@
 'use client'
 
-import { Text, Heading, Stack, Input, Button } from '@chakra-ui/react'
+import { Text, Heading, Stack, Input, Button, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Tfoot } from '@chakra-ui/react'
 import React, {useState} from 'react'
 import { gql, useQuery, useMutation } from '@apollo/client';
 
@@ -34,7 +34,59 @@ export default function RSVP() {
       <Heading color="brand.orangeRyb">RSVP</Heading>
       <Text fontWeight="bold">Please RSVP for the number of adults and children. Don&apos;t worry if you think you have already RSVP&apos;d, we&apos;ll make sure you are only counted once.</Text>
       <Form/>
+      <RSVPTable/>
     </Stack>
+  )
+}
+
+const GET_RSVPS = gql`
+  query GetRsvps {
+    rsvps {
+      adults
+      children
+      name
+    }
+  }
+`;
+
+function RSVPTable() {
+  const { loading, error, data } = useQuery<{rsvps: Array<RSVPInput>}>(GET_RSVPS)
+
+  if (loading || error !== undefined || data === undefined) {
+    return null
+  }
+
+  const {rsvps} = data;
+
+  const totalAdults = rsvps.map(rsvp => Number.parseInt(rsvp.adults)).reduce((acc, next) => acc+next)
+  const totalChildren = rsvps.map(rsvp => Number.parseInt(rsvp.children)).reduce((acc, next) => acc+next)
+
+  return (
+    <TableContainer>
+      <Table variant='simple'>
+        <Thead>
+          <Tr>
+            <Th color="brand.orangeRyb">Adults</Th>
+            <Th color="brand.orangeRyb">Children</Th>
+            <Th color="brand.orangeRyb">Name</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {rsvps.map((input,index) => <Tr key={index} bgColor="brand.sinopia">
+            <Td>{input.adults}</Td>
+            <Td>{input.children}</Td>
+            <Td>{input.name}</Td>
+          </Tr>)}
+        </Tbody>
+        <Tfoot>
+          <Tr bgColor="brand.sinopia">
+            <Th color="brand.orangeRyb" fontSize="lg">{totalAdults}</Th>
+            <Th color="brand.orangeRyb" fontSize="lg">{totalChildren}</Th>
+            <Th color="brand.orangeRyb" fontSize="lg">TOTAL</Th>
+          </Tr>
+        </Tfoot>
+      </Table>
+    </TableContainer>
   )
 }
 
@@ -58,7 +110,7 @@ function Form() {
   const [adults, setAdults] = useState<string>('')
   const [children, setChildren] = useState<string>('')
   const [name, setName] = useState<string>('')
-  const [addRsvp, mutationData] = useMutation<RSVPInput>(ADD_RSVP);
+  const [addRsvp, mutationData] = useMutation<RSVPInput>(ADD_RSVP, {refetchQueries: [GET_RSVPS]});
 
   if (mutationData.loading) {
     return <Text>Submitting . . . . </Text>
@@ -66,10 +118,6 @@ function Form() {
 
   if (mutationData.error !== undefined) {
     return <Text>There was an error . . . . </Text>
-  }
-
-  if (mutationData.data !== undefined) {
-    return <Text>Thanks for your input!</Text>
   }
 
   return <form
