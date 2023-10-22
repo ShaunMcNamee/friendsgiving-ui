@@ -3,7 +3,7 @@
 import { Text, Heading, Stack } from '@chakra-ui/react'
 import React from 'react'
 import { gql, useQuery } from '@apollo/client';
-import { addHours, differenceInDays, format } from 'date-fns'
+import { addHours, format } from 'date-fns'
 
 const GET_DATES = gql`
   query GetDates {
@@ -31,12 +31,11 @@ export default function DaysUntil() {
   const date = data.friendsgivingDates.find((fDate:FriendsgivingDate) => fDate.active);
   // To account for time zone differences
   const actualDate = addHours(new Date(date?.date || ''), 19)
-  const today = new Date();
 
   return (
     <Stack spacing={4}>
-      <Heading color="brand.orangeRyb">When is Friendsgiving?</Heading>
-      <Text fontWeight="bold">Friendsgiving is on {format(actualDate, 'MMM dd, yyyy')}, which is {differenceInDays(actualDate, today)} days from now.</Text>
+      <Heading color="brand.orangeRyb">When is Friendsgiving 2023?</Heading>
+      <Text fontWeight="bold">We will celebrate at the McAmor's home on {format(actualDate, 'EEEE MMMM do')}. Everyone is welcome anytime after noon - we will have charcuterie lunch/snacks for pre-meal noshing.  See below for settling on a time for the meal.</Text>
     </Stack>
   )
 }

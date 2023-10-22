@@ -46,7 +46,7 @@ export default function Polling() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">Food Time Poll</Heading>
-      <Text fontWeight="bold">Please choose the times that are best for you to eat, and put in your name. Don&apos;t worry if you think you have already voted, we&apos;ll make sure you are only counted once.</Text>
+      <Text fontWeight="bold">Please choose the times that are best for you and your gang to have our meal - we will triangulate the best time for all and report back later this week.</Text>
       <Poll/>
       <PollTable/>
     </Stack>
