@@ -35,7 +35,7 @@ export default function DaysUntil() {
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">When is Friendsgiving 2023?</Heading>
-      <Text fontWeight="bold">We will celebrate at the McAmor's home on {format(actualDate, 'EEEE MMMM do')}. Everyone is welcome anytime after noon - we will have charcuterie lunch/snacks for pre-meal noshing.  See below for settling on a time for the meal.</Text>
+      <Text fontWeight="bold">We will celebrate at the McAmor&apos;s home on {format(actualDate, 'EEEE MMMM do')}. Everyone is welcome anytime after noon - we will have charcuterie lunch/snacks for pre-meal noshing.  See below for settling on a time for the meal.</Text>
     </Stack>
   )
 }
