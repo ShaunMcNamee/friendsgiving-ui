@@ -123,7 +123,7 @@ function Form() {
   return <form
     onSubmit={async (e) => {
       e.preventDefault();
-      await addRsvp({ variables: { adults, children: children === '' ? 0 : children, name } });
+      await addRsvp({ variables: { adults, children: children === '' ? '0' : children, name } });
       setAdults('')
       setChildren('')
       setName('')
