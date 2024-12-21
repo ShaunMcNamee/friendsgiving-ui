@@ -6,16 +6,10 @@ import {
   Stack,
   Input,
   Button,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  TableContainer,
 } from '@chakra-ui/react'
 import React, {useState} from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client';
+import { gql, useQuery, useMutation } from '@apollo/client'
+import { groupBy } from 'fp-ts/NonEmptyArray'
 
 const GET_FOODS = gql`
   query GetFoods {
@@ -40,27 +34,24 @@ export default function Foods() {
 
   const foods = data.foods;
 
+  const groupedFoods = groupBy((food: object) => food.name)(foods)
+
+  console.log(groupedFoods)
+
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">Foods</Heading>
       <Text fontWeight="bold">Please add any foods you are going to bring.</Text>
       <Form/>
-      <TableContainer>
-        <Table variant='simple'>
-          <Thead>
-            <Tr>
-              <Th color="brand.orangeRyb">Dish</Th>
-              <Th color="brand.orangeRyb">Name</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {foods.map((food,index) => <Tr key={index} bgColor="brand.sinopia">
-              <Td>{food.dish}</Td>
-              <Td>{food.name}</Td>
-            </Tr>)}
-          </Tbody>
-        </Table>
-      </TableContainer>
+      <Heading color="brand.orangeRyb">Current committed foods</Heading>
+      {
+        Object.entries(groupedFoods).map(([key, value]) => (
+          <>
+          <Text fontWeight="bold">{key}:</Text>
+            {value.map((food) => (<Text paddingLeft={12} fontWeight="bold">{food.dish}</Text>))}
+          </>
+        ))
+      }
     </Stack>
   )
 }
