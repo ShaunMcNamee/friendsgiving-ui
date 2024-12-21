@@ -47,8 +47,8 @@ export default function Foods() {
       {
         Object.entries(groupedFoods).map(([key, value]) => (
           <>
-          <Text fontWeight="bold">{key}:</Text>
-            {value.map((food) => (<Text paddingLeft={12} fontWeight="bold">{food.dish}</Text>))}
+          <Text fontWeight="bold" key={key}>{key}:</Text>
+            {value.map((food) => (<Text paddingLeft={12} fontWeight="bold" key={food.dish}>{food.dish}</Text>))}
           </>
         ))
       }
