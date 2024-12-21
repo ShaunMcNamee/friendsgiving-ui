@@ -34,7 +34,7 @@ export default function Foods() {
 
   const foods = data.foods;
 
-  const groupedFoods = groupBy((food: object) => food.name)(foods)
+  const groupedFoods = groupBy((food: any) => food.name)(foods)
 
   console.log(groupedFoods)
 
