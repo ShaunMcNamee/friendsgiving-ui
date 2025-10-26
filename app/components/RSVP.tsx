@@ -16,7 +16,7 @@ export default function RSVP({db}: {db: any}) {
 }
 
 function RSVPTable({db, reload, setReload}: {db: any, reload: boolean, setReload: any}) {
-  const [rsvps, setRSVPs] = useState([]);
+  const [rsvps, setRSVPs] = useState(Array<{id: string, adults: string, children: string, name: string}>);
   async function getRSVPs() {
     let { data: rsvps } = await db
       .from('rsvps')

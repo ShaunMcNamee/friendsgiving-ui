@@ -30,8 +30,8 @@ export default function Polling({db}: {db: any}) {
 }
 
 function PollTable({db, reload, setReload}: {db: any, reload: boolean, setReload: any}) {
-  const [polls, setPolls] = useState([]);
-  const [pollOptions, setPollOptions] = useState([])
+  const [polls, setPolls] = useState(Array<{id: string, name: string, poll_option: string}>);
+  const [pollOptions, setPollOptions] = useState(Array<{id: string, option: string}>)
   async function getPolls() {
     let { data: polls } = await db
       .from('polls')
@@ -78,7 +78,7 @@ function PollTable({db, reload, setReload}: {db: any, reload: boolean, setReload
 function Poll({db, setReload}: {db: any, setReload: any}) {
   const [optionsChosen, setOptionsChosen] = useState<Array<string>>([])
   const [name, setName] = useState<string>('')
-  const [pollOptions, setPollOptions] = useState([])
+  const [pollOptions, setPollOptions] = useState(Array<{id: string, option: string}>)
   async function getPollOptions() {
     let { data: pollOptions } = await db
       .from('poll_options')
