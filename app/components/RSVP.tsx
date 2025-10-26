@@ -1,65 +1,36 @@
 'use client'
 
 import { Text, Heading, Stack, Input, Button, TableContainer, Table, Thead, Tr, Th, Tbody, Td, Tfoot } from '@chakra-ui/react'
-import React, {useState} from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client';
+import React, { useEffect, useState} from 'react'
 
-const GET_TAKING_RSVP = gql`
-  query GetTakingRsvp {
-    takingRsvp {
-      areTakingRsvp
-    }
-  }
-`;
-
-type TakingRsvp = {
-  areTakingRsvp: boolean
-}
-
-export default function RSVP() {
-  const { loading, error, data } = useQuery<{takingRsvp: TakingRsvp}>(GET_TAKING_RSVP)
-
-  if (loading || error !== undefined || data === undefined) {
-    return null
-  }
-
-  const isTakingRsvp = data.takingRsvp.areTakingRsvp;
-
-  if (!isTakingRsvp) {
-    return null
-  }
-
+export default function RSVP({db}: {db: any}) {
+  const [reload, setReload] = useState<boolean>(true)
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">RSVP</Heading>
       <Text fontWeight="bold">Please RSVP for the number of adults and children. Check the bottom of the chart of guest totals so you know how much to make/bring.</Text>
-      <Form/>
-      <RSVPTable/>
+      <Form db={db} setReload={setReload}/>
+      <RSVPTable db={db} reload={reload} setReload={setReload}/>
     </Stack>
   )
 }
 
-const GET_RSVPS = gql`
-  query GetRsvps {
-    rsvps {
-      adults
-      children
-      name
-    }
-  }
-`;
-
-function RSVPTable() {
-  const { loading, error, data } = useQuery<{rsvps: Array<RSVPInput>}>(GET_RSVPS)
-
-  if (loading || error !== undefined || data === undefined) {
-    return null
+function RSVPTable({db, reload, setReload}: {db: any, reload: boolean, setReload: any}) {
+  const [rsvps, setRSVPs] = useState([]);
+  async function getRSVPs() {
+    let { data: rsvps } = await db
+      .from('rsvps')
+      .select('*')
+    setRSVPs(rsvps)
+    setReload(false)
   }
 
-  const {rsvps} = data;
+  useEffect(() => {
+    getRSVPs();
+  }, [reload]);
 
-  const totalAdults = rsvps.map(rsvp => Number.parseInt(rsvp.adults)).reduce((acc, next) => acc+next)
-  const totalChildren = rsvps.map(rsvp => Number.parseInt(rsvp.children)).reduce((acc, next) => acc+next)
+  const totalAdults = rsvps.map(rsvp => Number.parseInt(rsvp.adults)).reduce((acc, next) => acc+next, 0)
+  const totalChildren = rsvps.map(rsvp => Number.parseInt(rsvp.children)).reduce((acc, next) => acc+next, 0)
 
   return (
     <TableContainer>
@@ -90,43 +61,24 @@ function RSVPTable() {
   )
 }
 
-const ADD_RSVP = gql`
-mutation rsvps($adults: String!, $children: String!, $name: String!) {
-    createRsvp(input: {data: {adults: $adults, children: $children, name: $name}}) {
-      rsvp {
-        id
-      }
-    }
-  }
-`;
-
-type RSVPInput = {
-  adults: string
-  children: string
-  name: string
-}
-
-function Form() {
+function Form({db, setReload}: {db: any, setReload: any}) {
   const [adults, setAdults] = useState<string>('')
   const [children, setChildren] = useState<string>('')
   const [name, setName] = useState<string>('')
-  const [addRsvp, mutationData] = useMutation<RSVPInput>(ADD_RSVP, {refetchQueries: [GET_RSVPS]});
-
-  if (mutationData.loading) {
-    return <Text>Submitting . . . . </Text>
-  }
-
-  if (mutationData.error !== undefined) {
-    return <Text>There was an error . . . . </Text>
-  }
 
   return <form
     onSubmit={async (e) => {
-      e.preventDefault();
-      await addRsvp({ variables: { adults, children: children === '' ? '0' : children, name } });
+      e.preventDefault()
+      await db
+        .from('rsvps')
+        .insert([
+          { adults: Number.isNaN(Number.parseInt(adults)) ? 0 : Number.parseInt(adults), children: Number.isNaN(Number.parseInt(children)) ? 0 : Number.parseInt(children), name },
+        ])
+        .select()
       setAdults('')
       setChildren('')
       setName('')
+      setReload(true)
     }}>
     <Stack direction={['column', 'row']}>
       <Input placeholder="Adults" variant="filled" value={adults} onChange={(e) => setAdults(e.target.value)}/>

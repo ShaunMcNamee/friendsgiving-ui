@@ -7,48 +7,37 @@ import {
   Input,
   Button,
 } from '@chakra-ui/react'
-import React, {useState} from 'react'
-import { gql, useQuery, useMutation } from '@apollo/client'
+import React, {useEffect, useState} from 'react'
 import { groupBy } from 'fp-ts/NonEmptyArray'
 
-const GET_FOODS = gql`
-  query GetFoods {
-    foods {
-      dish
-      name
-    }
-  }
-`;
-
-type Foods = {
-  dish: string
-  name: string
-}
-
-export default function Foods() {
-  const { loading, error, data } = useQuery<{foods: Array<Foods>}>(GET_FOODS)
-
-  if (loading || error !== undefined || data === undefined) {
-    return null
+export default function Foods({db}: {db: any}) {
+  const [reload, setReload] = useState<boolean>(true)
+  const [foods, setFoods] = useState([]);
+  async function getFoods() {
+    let { data: foods } = await db
+      .from('foods')
+      .select('*')
+    setFoods(foods)
+    setReload(false)
   }
 
-  const foods = data.foods;
+  useEffect(() => {
+    getFoods();
+  }, [reload]);
 
   const groupedFoods = groupBy((food: any) => food.name)(foods)
-
-  console.log(groupedFoods)
 
   return (
     <Stack spacing={4}>
       <Heading color="brand.orangeRyb">Foods</Heading>
       <Text fontWeight="bold">Please add any foods you are going to bring.</Text>
-      <Form/>
+      <Form db={db} setReload={setReload}/>
       <Heading color="brand.orangeRyb">Current committed foods</Heading>
       {
         Object.entries(groupedFoods).map(([key, value]) => (
           <>
           <Text fontWeight="bold" key={key}>{key}:</Text>
-            {value.map((food) => (<Text paddingLeft={12} fontWeight="bold" key={food.dish}>{food.dish}</Text>))}
+            {value.map((food) => (<Text paddingLeft={12} fontWeight="bold" key={food.id}>{food.dish}</Text>))}
           </>
         ))
       }
@@ -56,42 +45,22 @@ export default function Foods() {
   )
 }
 
-const ADD_FOOD = gql`
-mutation foods($dish: String!, $name: String!) {
-    createFood(input: {data: {dish: $dish, name: $name}}) {
-      food {
-        id
-      }
-    }
-  }
-`;
-
-type FoodInput = {
-  dish: string
-  name: string
-}
-
-function Form() {
+function Form({db, setReload}: {db: any, setReload: any}) {
   const [dish, setDish] = useState<string>('')
   const [name, setName] = useState<string>('')
-  const [addFood, mutationData] = useMutation<FoodInput>(ADD_FOOD, {refetchQueries: [
-      GET_FOODS,
-    ]});
-
-  if (mutationData.loading) {
-    return <Text>Submitting . . . . </Text>
-  }
-
-  if (mutationData.error !== undefined) {
-    return <Text>There was an error . . . . </Text>
-  }
 
   return <form
     onSubmit={async (e) => {
-      e.preventDefault();
-      await addFood({ variables: { dish, name } });
+      e.preventDefault()
+      await db
+        .from('foods')
+        .insert([
+          { dish, name },
+        ])
+        .select()
       setDish('')
       setName('')
+      setReload(true)
     }}>
     <Stack direction={['column', 'row']}>
       <Input placeholder="Dish" variant="filled" value={dish} onChange={(e) => setDish(e.target.value)}/>
