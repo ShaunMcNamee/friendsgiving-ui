@@ -20,10 +20,11 @@ export default function DaysUntil({db}: {db: any}) {
   // To account for time zone differences
   const actualDate = addHours(new Date(date || ''), 19)
   const displayDate = date !== '' ? format(actualDate, 'EEEE MMMM do') : ''
+  const displayYear = date !== '' ? format(actualDate, 'YYYY') : ''
 
   return (
     <Stack spacing={4}>
-      <Heading color="brand.orangeRyb">When is Friendsgiving 2025?</Heading>
+      <Heading color="brand.orangeRyb">When is Friendsgiving {displayYear}?</Heading>
       <Text fontWeight="bold">We will celebrate at the McAmor&apos;s home on {displayDate}. Everyone is welcome anytime after noon - we will have fall lunch/snacks for pre-meal noshing. See below for settling on a time for the meal.</Text>
     </Stack>
   )
