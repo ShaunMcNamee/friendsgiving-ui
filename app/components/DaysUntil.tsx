@@ -20,7 +20,7 @@ export default function DaysUntil({db}: {db: any}) {
   // To account for time zone differences
   const actualDate = addHours(new Date(date || ''), 19)
   const displayDate = date !== '' ? format(actualDate, 'EEEE MMMM do') : ''
-  const displayYear = date !== '' ? format(actualDate, 'YYYY') : ''
+  const displayYear = date !== '' ? format(actualDate, 'yyyy') : ''
 
   return (
     <Stack spacing={4}>
